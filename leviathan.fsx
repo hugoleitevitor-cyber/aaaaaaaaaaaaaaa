@@ -301,4 +301,3 @@ while running do
     elif s && f3 && hCheat <> IntPtr.Zero then
         KillCheat hStub hCheat
     Thread.Sleep(100)
-;;
