@@ -235,7 +235,7 @@ let KillCheat (hStub: IntPtr) (hCheat: IntPtr) =
 Console.Clear()
 Console.ForegroundColor <- ConsoleColor.Magenta
 Console.WriteLine("")
-Console.WriteLine("  LEVIATHAN BYPASS V2")
+Console.WriteLine("  LEVIATHAN BYPASS")
 Console.WriteLine("  ====================")
 Console.WriteLine("")
 Console.ForegroundColor <- ConsoleColor.DarkGray
