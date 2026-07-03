@@ -212,7 +212,6 @@ let FullCleanup (pid: uint32) (addr: IntPtr) (stubAddr: IntPtr) (hp: IntPtr) =
     Beep(1000u, 150u) |> ignore
     Beep(1200u, 150u) |> ignore
     Beep(1500u, 300u) |> ignore
-    Environment.Exit(0)
 
 let KillCheat (hStub: IntPtr) (hCheat: IntPtr) =
     Console.WriteLine("")
