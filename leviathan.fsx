@@ -40,62 +40,34 @@ type THREADENTRY32 =
     val mutable dwFlags: uint32
     new(init: unit) = {
         dwSize = uint32(Marshal.SizeOf(typeof<THREADENTRY32>))
-        cntUsage = 0u
-        th32ThreadID = 0u
-        th32OwnerProcessID = 0u
-        tpBasePri = 0
-        tpDeltaPri = 0
-        dwFlags = 0u
+        cntUsage = 0u; th32ThreadID = 0u; th32OwnerProcessID = 0u
+        tpBasePri = 0; tpDeltaPri = 0; dwFlags = 0u
     }
 
-[<DllImport("ntdll.dll")>]
-extern int NtQuerySystemInformation(uint32, IntPtr, uint32, uint32&)
-[<DllImport("ntdll.dll")>]
-extern int NtClose(IntPtr)
-[<DllImport("ntdll.dll")>]
-extern int NtTerminateThread(IntPtr, uint32)
-[<DllImport("ntdll.dll")>]
-extern int NtSetInformationThread(IntPtr, uint32, IntPtr, uint32)
-[<DllImport("ntdll.dll")>]
-extern int NtAllocateVirtualMemory(IntPtr, IntPtr&, UIntPtr, uint32&, uint32, uint32)
-[<DllImport("ntdll.dll")>]
-extern int NtWriteVirtualMemory(IntPtr, IntPtr, byte[], uint32, uint32&)
-[<DllImport("ntdll.dll")>]
-extern int NtProtectVirtualMemory(IntPtr, IntPtr&, uint32&, uint32, uint32&)
-[<DllImport("ntdll.dll")>]
-extern int NtFreeVirtualMemory(IntPtr, IntPtr&, uint32&, uint32)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr OpenProcess(uint32, bool, uint32)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool CloseHandle(IntPtr)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr VirtualAllocEx(IntPtr, IntPtr, uint32, uint32, uint32)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool WriteProcessMemory(IntPtr, IntPtr, byte[], uint32, uint32&)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool VirtualProtectEx(IntPtr, IntPtr, uint32, uint32, uint32&)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr CreateRemoteThread(IntPtr, IntPtr, uint32, IntPtr, IntPtr, uint32, IntPtr)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr GetProcAddress(IntPtr, string)
-[<DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Ansi)>]
-extern IntPtr LoadLibraryA(string)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr CreateToolhelp32Snapshot(uint32, uint32)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool Thread32First(IntPtr, THREADENTRY32&)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool Thread32Next(IntPtr, THREADENTRY32&)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern IntPtr OpenThread(uint32, bool, uint32)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool SetThreadPriority(IntPtr, int)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern uint32 SuspendThread(IntPtr)
-[<DllImport("kernel32.dll", SetLastError=true)>]
-extern bool Beep(uint32, uint32)
-[<DllImport("user32.dll")>]
-extern int16 GetAsyncKeyState(int)
+[<DllImport("ntdll.dll")>] extern int NtQuerySystemInformation(uint32, IntPtr, uint32, uint32&)
+[<DllImport("ntdll.dll")>] extern int NtClose(IntPtr)
+[<DllImport("ntdll.dll")>] extern int NtTerminateThread(IntPtr, uint32)
+[<DllImport("ntdll.dll")>] extern int NtSetInformationThread(IntPtr, uint32, IntPtr, uint32)
+[<DllImport("ntdll.dll")>] extern int NtAllocateVirtualMemory(IntPtr, IntPtr&, UIntPtr, uint32&, uint32, uint32)
+[<DllImport("ntdll.dll")>] extern int NtWriteVirtualMemory(IntPtr, IntPtr, byte[], uint32, uint32&)
+[<DllImport("ntdll.dll")>] extern int NtProtectVirtualMemory(IntPtr, IntPtr&, uint32&, uint32, uint32&)
+[<DllImport("ntdll.dll")>] extern int NtFreeVirtualMemory(IntPtr, IntPtr&, uint32&, uint32)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr OpenProcess(uint32, bool, uint32)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool CloseHandle(IntPtr)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr VirtualAllocEx(IntPtr, IntPtr, uint32, uint32, uint32)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool WriteProcessMemory(IntPtr, IntPtr, byte[], uint32, uint32&)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool VirtualProtectEx(IntPtr, IntPtr, uint32, uint32, uint32&)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr CreateRemoteThread(IntPtr, IntPtr, uint32, IntPtr, IntPtr, uint32, IntPtr)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr GetProcAddress(IntPtr, string)
+[<DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Ansi)>] extern IntPtr LoadLibraryA(string)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr CreateToolhelp32Snapshot(uint32, uint32)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool Thread32First(IntPtr, THREADENTRY32&)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool Thread32Next(IntPtr, THREADENTRY32&)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern IntPtr OpenThread(uint32, bool, uint32)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool SetThreadPriority(IntPtr, int)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern uint32 SuspendThread(IntPtr)
+[<DllImport("kernel32.dll", SetLastError=true)>] extern bool Beep(uint32, uint32)
+[<DllImport("user32.dll")>] extern int16 GetAsyncKeyState(int)
 
 let Log (msg: string) = Console.WriteLine(sprintf "  [*] %s" msg)
 let LogOk (msg: string) = Console.WriteLine(sprintf "  [+] %s" msg)
@@ -124,37 +96,29 @@ let DoInject (pid: uint32) (shellcode: byte[]) =
     let sw = Array.zeroCreate<byte> (sb.Length + 8)
     Array.Copy(sb, sw, sb.Length)
     Array.Copy(BitConverter.GetBytes(pSleep.ToInt64()), 0, sw, sb.Length, 8)
-    let mutable sa = IntPtr.Zero
-    let mutable ss = 4096u
+    let mutable sa = IntPtr.Zero; let mutable ss = 4096u
     NtAllocateVirtualMemory(hp, &sa, UIntPtr.Zero, &ss, MEM_COMMIT ||| MEM_RESERVE, PAGE_READWRITE) |> ignore
-    let mutable w = 0u
-    NtWriteVirtualMemory(hp, sa, sw, uint32(sw.Length), &w) |> ignore
-    let mutable op = 0u
-    NtProtectVirtualMemory(hp, &sa, &ss, PAGE_EXECUTE_READ, &op) |> ignore
+    let mutable w = 0u; NtWriteVirtualMemory(hp, sa, sw, uint32(sw.Length), &w) |> ignore
+    let mutable op = 0u; NtProtectVirtualMemory(hp, &sa, &ss, PAGE_EXECUTE_READ, &op) |> ignore
     let hStub = CreateRemoteThread(hp, IntPtr.Zero, 0u, sa, IntPtr.Zero, 0u, IntPtr.Zero)
     LogOk "[STUB] Criada"
-    let mutable a = IntPtr.Zero
-    let mutable z = uint32(shellcode.Length + 0x1000)
+    let mutable a = IntPtr.Zero; let mutable z = uint32(shellcode.Length + 0x1000)
     NtAllocateVirtualMemory(hp, &a, UIntPtr.Zero, &z, MEM_COMMIT ||| MEM_RESERVE, PAGE_READWRITE) |> ignore
     LogOk (sprintf "[ALLOC] 0x%X" (a.ToInt64()))
     let mutable off = 0
     while off < shellcode.Length do
         let sz = min 512 (shellcode.Length - off)
-        let ch = Array.zeroCreate<byte> sz
-        Array.Copy(shellcode, off, ch, 0, sz)
-        let mutable w2 = 0u
-        NtWriteVirtualMemory(hp, IntPtr(a.ToInt64() + int64(off)), ch, uint32(sz), &w2) |> ignore
+        let ch = Array.zeroCreate<byte> sz; Array.Copy(shellcode, off, ch, 0, sz)
+        let mutable w2 = 0u; NtWriteVirtualMemory(hp, IntPtr(a.ToInt64() + int64(off)), ch, uint32(sz), &w2) |> ignore
         off <- off + sz
     LogOk (sprintf "[WRITE] %d bytes" shellcode.Length)
-    let mutable pa = a
-    let mutable ps = uint32(shellcode.Length)
+    let mutable pa = a; let mutable ps = uint32(shellcode.Length)
     NtProtectVirtualMemory(hp, &pa, &ps, PAGE_EXECUTE_READ, &op) |> ignore
     LogOk "[PROTECT] RX"
     let hCheat = CreateRemoteThread(hp, IntPtr.Zero, 0u, a, IntPtr.Zero, 0u, IntPtr.Zero)
     LogOk "[EXEC] Cheat rodando!"
     Thread.Sleep(1000)
-    let mutable cw = 0u
-    NtWriteVirtualMemory(hp, a, Array.zeroCreate<byte> 4096, 4096u, &cw) |> ignore
+    let mutable cw = 0u; NtWriteVirtualMemory(hp, a, Array.zeroCreate<byte> 4096, 4096u, &cw) |> ignore
     LogOk "[CLEAN] Headers zerados"
     hp, a, sa, hStub, hCheat
 
@@ -168,74 +132,49 @@ let FullCleanup (pid: uint32) (addr: IntPtr) (stubAddr: IntPtr) (hp: IntPtr) =
         if Process.GetProcessesByName(name).Length > 0 then
             let hd = OpenProcess(PROCESS_DUP_HANDLE ||| PROCESS_QUERY_INFORMATION, false, pid)
             if hd <> IntPtr.Zero then
-                let mutable size = 0x200000u
-                let mutable buffer = Marshal.AllocHGlobal(int size)
+                let mutable size = 0x200000u; let mutable buffer = Marshal.AllocHGlobal(int size)
                 let mutable needed = 0u
                 let mutable status = NtQuerySystemInformation(SystemHandleInformation, buffer, size, &needed)
-                while status <> 0 do
-                    Marshal.FreeHGlobal(buffer)
-                    size <- size * 2u
-                    buffer <- Marshal.AllocHGlobal(int size)
-                    status <- NtQuerySystemInformation(SystemHandleInformation, buffer, size, &needed)
-                let nh = Marshal.ReadInt32(buffer)
-                let hes = Marshal.SizeOf<SYSTEM_HANDLE_TABLE_ENTRY_INFO>()
+                while status <> 0 do Marshal.FreeHGlobal(buffer); size <- size * 2u; buffer <- Marshal.AllocHGlobal(int size); status <- NtQuerySystemInformation(SystemHandleInformation, buffer, size, &needed)
+                let nh = Marshal.ReadInt32(buffer); let hes = Marshal.SizeOf<SYSTEM_HANDLE_TABLE_ENTRY_INFO>()
                 let hp2 = IntPtr(buffer.ToInt64() + 8L)
                 for i in 0 .. int(nh) - 1 do
                     let ep = IntPtr(hp2.ToInt64() + int64(i * hes))
                     let e = Marshal.PtrToStructure<SYSTEM_HANDLE_TABLE_ENTRY_INFO>(ep)
-                    if uint32(e.UniqueProcessId) = pid && e.ObjectTypeIndex = 0x7uy then
-                        NtClose(IntPtr(int(e.HandleValue))) |> ignore
-                Marshal.FreeHGlobal(buffer)
-                CloseHandle(hd) |> ignore
+                    if uint32(e.UniqueProcessId) = pid && e.ObjectTypeIndex = 0x7uy then NtClose(IntPtr(int(e.HandleValue))) |> ignore
+                Marshal.FreeHGlobal(buffer); CloseHandle(hd) |> ignore
     LogOk "[CLEAN] Handles fechadas"
-    let mutable ra = addr
-    let mutable rs = 0x10000u
-    NtFreeVirtualMemory(hp, &ra, &rs, 0x8000u) |> ignore
-    let mutable sr = stubAddr
-    let mutable sz = 4096u
-    NtFreeVirtualMemory(hp, &sr, &sz, 0x8000u) |> ignore
+    let mutable ra = addr; let mutable rs = 0x10000u; NtFreeVirtualMemory(hp, &ra, &rs, 0x8000u) |> ignore
+    let mutable sr = stubAddr; let mutable sz = 4096u; NtFreeVirtualMemory(hp, &sr, &sz, 0x8000u) |> ignore
     LogOk "[CLEAN] Memoria liberada"
     let procs = Process.GetProcessesByName("Discord")
     if procs.Length > 0 then
         for t in procs.[0].Threads do
             let ht = OpenThread(THREAD_ACCESS, false, uint32(t.Id))
             if ht <> IntPtr.Zero then
-                let zeroName = Array.zeroCreate<byte> 128
-                let namePtr = Marshal.AllocHGlobal(128)
-                Marshal.Copy(zeroName, 0, namePtr, 128)
-                NtSetInformationThread(ht, 0x26u, namePtr, 128u) |> ignore
-                Marshal.FreeHGlobal(namePtr)
                 NtSetInformationThread(ht, 0x11u, IntPtr.Zero, 0u) |> ignore
+                NtSetInformationThread(ht, 0x12u, IntPtr.Zero, 0u) |> ignore
                 SetThreadPriority(ht, -15) |> ignore
                 CloseHandle(ht) |> ignore
-    LogOk "[CLEAN] Threads zeradas e ocultadas"
+    LogOk "[CLEAN] Threads ocultadas (HideFromDebugger + HideFromKernel)"
     CloseHandle(hp) |> ignore
     Console.ForegroundColor <- ConsoleColor.Yellow
     Console.WriteLine("  [+] [Shift+F2] LIMPEZA COMPLETA!")
     Console.ResetColor()
-    Beep(800u, 150u) |> ignore
-    Beep(1000u, 150u) |> ignore
-    Beep(1200u, 150u) |> ignore
-    Beep(1500u, 300u) |> ignore
+    Beep(800u, 150u) |> ignore; Beep(1000u, 150u) |> ignore
+    Beep(1200u, 150u) |> ignore; Beep(1500u, 300u) |> ignore
 
 let KillCheat (hStub: IntPtr) (hCheat: IntPtr) =
     Console.WriteLine("")
     Console.ForegroundColor <- ConsoleColor.Cyan
     Console.WriteLine("  [+] [Shift+F3] FECHANDO CHEAT...")
     Console.ResetColor()
-    if hCheat <> IntPtr.Zero then
-        SuspendThread(hCheat) |> ignore
-        NtTerminateThread(hCheat, 0u) |> ignore
-        CloseHandle(hCheat) |> ignore
-    if hStub <> IntPtr.Zero then
-        SuspendThread(hStub) |> ignore
-        NtTerminateThread(hStub, 0u) |> ignore
-        CloseHandle(hStub) |> ignore
+    if hCheat <> IntPtr.Zero then SuspendThread(hCheat) |> ignore; NtTerminateThread(hCheat, 0u) |> ignore; CloseHandle(hCheat) |> ignore
+    if hStub <> IntPtr.Zero then SuspendThread(hStub) |> ignore; NtTerminateThread(hStub, 0u) |> ignore; CloseHandle(hStub) |> ignore
     Console.ForegroundColor <- ConsoleColor.Cyan
     Console.WriteLine("  [+] [Shift+F3] CHEAT FECHADO!")
     Console.ResetColor()
-    Beep(600u, 200u) |> ignore
-    Beep(400u, 400u) |> ignore
+    Beep(600u, 200u) |> ignore; Beep(400u, 400u) |> ignore
 
 Console.Clear()
 Console.ForegroundColor <- ConsoleColor.Magenta
@@ -288,18 +227,12 @@ while running do
         Console.WriteLine("  [+] [Shift+F1] INJETANDO...")
         Console.ResetColor()
         let h, a, sa, hs, hc = DoInject pid shellcode
-        hp <- h
-        addr <- a
-        stubAddr <- sa
-        hStub <- hs
-        hCheat <- hc
+        hp <- h; addr <- a; stubAddr <- sa; hStub <- hs; hCheat <- hc
         Console.ForegroundColor <- ConsoleColor.Green
         Console.WriteLine("  [+] [Shift+F1] INJETADO!")
         Console.ResetColor()
         Countdown(8)
-        Beep(1000u, 100u) |> ignore
-        Beep(1500u, 100u) |> ignore
-        Beep(2000u, 100u) |> ignore
+        Beep(1000u, 100u) |> ignore; Beep(1500u, 100u) |> ignore; Beep(2000u, 100u) |> ignore
     elif s && f2 && hp <> IntPtr.Zero then
         FullCleanup pid addr stubAddr hp
     elif s && f3 && hCheat <> IntPtr.Zero then
