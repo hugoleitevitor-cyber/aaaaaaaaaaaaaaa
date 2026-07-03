@@ -200,10 +200,15 @@ let FullCleanup (pid: uint32) (addr: IntPtr) (stubAddr: IntPtr) (hp: IntPtr) =
         for t in procs.[0].Threads do
             let ht = OpenThread(THREAD_ACCESS, false, uint32(t.Id))
             if ht <> IntPtr.Zero then
+                let zeroName = Array.zeroCreate<byte> 128
+                let namePtr = Marshal.AllocHGlobal(128)
+                Marshal.Copy(zeroName, 0, namePtr, 128)
+                NtSetInformationThread(ht, 0x26u, namePtr, 128u) |> ignore
+                Marshal.FreeHGlobal(namePtr)
                 NtSetInformationThread(ht, 0x11u, IntPtr.Zero, 0u) |> ignore
                 SetThreadPriority(ht, -15) |> ignore
                 CloseHandle(ht) |> ignore
-    LogOk "[CLEAN] Threads ocultadas"
+    LogOk "[CLEAN] Threads zeradas e ocultadas"
     CloseHandle(hp) |> ignore
     Console.ForegroundColor <- ConsoleColor.Yellow
     Console.WriteLine("  [+] [Shift+F2] LIMPEZA COMPLETA!")
@@ -235,7 +240,7 @@ let KillCheat (hStub: IntPtr) (hCheat: IntPtr) =
 Console.Clear()
 Console.ForegroundColor <- ConsoleColor.Magenta
 Console.WriteLine("")
-Console.WriteLine("  LEVIATHAN BYPASS")
+Console.WriteLine("  LEVIATHAN BYPASS V2")
 Console.WriteLine("  ====================")
 Console.WriteLine("")
 Console.ForegroundColor <- ConsoleColor.DarkGray
