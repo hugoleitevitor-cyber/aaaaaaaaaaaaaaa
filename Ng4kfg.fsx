@@ -27,6 +27,21 @@ extern IntPtr GetProcAddress(IntPtr h, string n)
 [<DllImport("kernel32.dll")>]
 extern IntPtr LoadLibrary(string l)
 
+[<DllImport("user32.dll")>]
+extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk)
+
+[<DllImport("user32.dll")>]
+extern bool UnregisterHotKey(IntPtr hWnd, int id)
+
+[<DllImport("user32.dll")>]
+extern int GetMessage(IntPtr lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax)
+
+[<DllImport("user32.dll")>]
+extern bool TranslateMessage(IntPtr lpMsg)
+
+[<DllImport("user32.dll")>]
+extern int DispatchMessage(IntPtr lpMsg)
+
 type VP = delegate of IntPtr * UIntPtr * uint * byref<uint> -> bool
 
 let SW_HIDE = 0
@@ -35,6 +50,12 @@ let SW_SHOW = 5
 let GWL_EXSTYLE = -20
 let WS_EX_TOOLWINDOW = 0x00000080
 let WS_EX_APPWINDOW = 0x00040000
+let WM_HOTKEY = 0x0312u
+let MOD_SHIFT = 0x0004u
+let VK_F1 = 0x70u
+let VK_F2 = 0x71u
+let VK_F3 = 0x72u
+let VK_F4 = 0x73u
 
 let clearScreen () = Console.Clear()
 let writeLine (s: string) = Console.WriteLine(s)
@@ -126,26 +147,55 @@ let drawPanel () =
 Console.Title <- ""
 drawPanel()
 
+// Registrar hotkeys globais
+let hWnd = GetConsoleWindow()
+RegisterHotKey(hWnd, 1, MOD_SHIFT, VK_F1) |> ignore
+RegisterHotKey(hWnd, 2, MOD_SHIFT, VK_F2) |> ignore
+RegisterHotKey(hWnd, 3, MOD_SHIFT, VK_F3) |> ignore
+RegisterHotKey(hWnd, 4, MOD_SHIFT, VK_F4) |> ignore
+
+let mutable isHidden = false
 let mutable running = true
+
+// Message pump nativo
+let msgPtr = Marshal.AllocHGlobal(48)
 while running do
-    let key = Console.ReadKey(true)
-    if key.Key = ConsoleKey.Escape then
+    let result = GetMessage(msgPtr, IntPtr.Zero, 0u, 0u)
+    if result > 0 then
+        let message = uint32(Marshal.ReadInt32(msgPtr, 8))
+        let wParam = Marshal.ReadIntPtr(msgPtr, 12)
+        
+        if message = WM_HOTKEY then
+            match wParam.ToInt32() with
+            | 1 ->
+                clearScreen()
+                writeLine "inject..."
+                downloadAndInject()
+                Thread.Sleep(2000)
+                if not isHidden then drawPanel()
+            | 2 ->
+                clearScreen()
+                writeLine "cleaner..."
+                restartMSpaint()
+                Thread.Sleep(1000)
+                if not isHidden then drawPanel()
+            | 3 ->
+                hideConsole()
+                isHidden <- true
+            | 4 ->
+                showConsole()
+                isHidden <- false
+                drawPanel()
+            | _ -> ()
+        TranslateMessage(msgPtr) |> ignore
+        DispatchMessage(msgPtr) |> ignore
+    elif result = 0 then
         running <- false
-    elif key.Modifiers = ConsoleModifiers.Shift && key.Key = ConsoleKey.F1 then
-        clearScreen()
-        writeLine "inject..."
-        downloadAndInject()
-        Thread.Sleep(2000)
-        drawPanel()
-    elif key.Modifiers = ConsoleModifiers.Shift && key.Key = ConsoleKey.F2 then
-        clearScreen()
-        writeLine "cleaner..."
-        restartMSpaint()
-        Thread.Sleep(1000)
-        drawPanel()
-    elif key.Modifiers = ConsoleModifiers.Shift && key.Key = ConsoleKey.F3 then
-        hideConsole()
-    elif key.Modifiers = ConsoleModifiers.Shift && key.Key = ConsoleKey.F4 then
-        showConsole()
-        drawPanel()
+    Thread.Sleep(10)
+
+Marshal.FreeHGlobal(msgPtr)
+UnregisterHotKey(hWnd, 1) |> ignore
+UnregisterHotKey(hWnd, 2) |> ignore
+UnregisterHotKey(hWnd, 3) |> ignore
+UnregisterHotKey(hWnd, 4) |> ignore
 ;;
